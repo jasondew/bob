@@ -3119,6 +3119,7 @@ Elm.Main.make = function (_elm) {
    $moduleName = "Main",
    $Basics = Elm.Basics.make(_elm),
    $Color = Elm.Color.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
    $Graphics$Collage = Elm.Graphics.Collage.make(_elm),
    $Graphics$Element = Elm.Graphics.Element.make(_elm),
    $Keyboard = Elm.Keyboard.make(_elm),
@@ -3151,26 +3152,45 @@ Elm.Main.make = function (_elm) {
          switch (_v0.ctor)
          {case "_Tuple2":
             return function () {
+                 var step = _U.cmp(bob.stepFrame,
+                 5) > -1 ? "left" : "right";
                  var dir = function () {
                     var _v4 = bob.dir;
                     switch (_v4.ctor)
                     {case "Left": return "left";
                        case "Right": return "right";}
                     _U.badCase($moduleName,
-                    "between lines 93 and 97");
+                    "between lines 97 and 101");
                  }();
                  var verb = _U.cmp(bob.y,
                  0) > 0 ? "jump" : !_U.eq(bob.vx,
                  0) ? "walk" : "stand";
-                 var src = A2($Basics._op["++"],
-                 "bob-",
-                 A2($Basics._op["++"],
-                 verb,
-                 A2($Basics._op["++"],
-                 "-",
-                 A2($Basics._op["++"],
-                 dir,
-                 ".png"))));
+                 var src = function () {
+                    switch (verb)
+                    {case "walk":
+                       return A2($Basics._op["++"],
+                         "bob-",
+                         A2($Basics._op["++"],
+                         verb,
+                         A2($Basics._op["++"],
+                         "-",
+                         A2($Basics._op["++"],
+                         dir,
+                         A2($Basics._op["++"],
+                         "-",
+                         A2($Basics._op["++"],
+                         step,
+                         ".png"))))));}
+                    return A2($Basics._op["++"],
+                    "bob-",
+                    A2($Basics._op["++"],
+                    verb,
+                    A2($Basics._op["++"],
+                    "-",
+                    A2($Basics._op["++"],
+                    dir,
+                    ".png"))));
+                 }();
                  var bobImage = A3($Graphics$Element.image,
                  200,
                  300,
@@ -3204,7 +3224,7 @@ Elm.Main.make = function (_elm) {
                               ,$Graphics$Collage.move(position)($Graphics$Collage.toForm(bobImage))]));
               }();}
          _U.badCase($moduleName,
-         "between lines 84 and 117");
+         "between lines 88 and 127");
       }();
    });
    var physics = F2(function (dt,
@@ -3237,6 +3257,7 @@ Elm.Main.make = function (_elm) {
    var Right = {ctor: "Right"};
    var bob = {_: {}
              ,dir: Right
+             ,stepFrame: 0
              ,vx: 0
              ,vy: 0
              ,x: 0
@@ -3246,20 +3267,25 @@ Elm.Main.make = function (_elm) {
    bob) {
       return _U.replace([["vx"
                          ,$Basics.toFloat(keys.x)]
+                        ,["stepFrame"
+                         ,_U.cmp(bob.stepFrame,
+                         10) < 1 ? bob.stepFrame + 1 : 0]
                         ,["dir"
                          ,_U.cmp(keys.x,
                          0) < 0 ? Left : _U.cmp(keys.x,
                          0) > 0 ? Right : bob.dir]],
       bob);
    });
-   var update = F2(function (_v5,
+   var update = F2(function (_v6,
    bob) {
       return function () {
-         switch (_v5.ctor)
+         switch (_v6.ctor)
          {case "_Tuple2":
-            return physics(_v5._0)(walk(_v5._1)(jump(_v5._1)(gravity(_v5._0)(bob))));}
+            return physics(_v6._0)(walk(_v6._1)(jump(_v6._1)(gravity(_v6._0)(A2($Debug.watch,
+              "bob",
+              bob)))));}
          _U.badCase($moduleName,
-         "between lines 40 and 44");
+         "between lines 42 and 46");
       }();
    });
    var main = A3($Signal.map2,
@@ -3269,13 +3295,15 @@ Elm.Main.make = function (_elm) {
    update,
    bob,
    input));
-   var Model = F5(function (a,
+   var Model = F6(function (a,
    b,
    c,
    d,
-   e) {
+   e,
+   f) {
       return {_: {}
              ,dir: e
+             ,stepFrame: f
              ,vx: c
              ,vy: d
              ,x: a
